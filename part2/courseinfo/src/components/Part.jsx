@@ -1,8 +1,8 @@
 const Part = ({ course }) => {
   return (
-    <h3>
+    <p>
       {course.name} {course.exercises}
-    </h3>
+    </p>
   )
 }
 
