@@ -1,5 +1,5 @@
-const Header = ({ course }) => {
-  return <h1>{course.name}</h1>
+const Header = () => {
+  return <h1>Web development curriculum</h1>
 }
 
 export default Header
