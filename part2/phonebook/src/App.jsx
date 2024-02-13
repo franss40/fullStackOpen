@@ -1,8 +1,9 @@
 import { useState } from "react"
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }])
+  const [persons, setPersons] = useState([{ name: "Arto Hellas", number: "39-44-5323523" }])
   const [newName, setNewName] = useState("")
+  const [newNumber, setNewNumber] = useState("")
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -16,8 +17,13 @@ const App = () => {
       setNewName('')
       return
     }
-    setPersons(persons.concat({ name: newName }))
+    setPersons(persons.concat({ name: newName, number: newNumber }))
     setNewName('')
+    setNewNumber('')
+  }
+
+  const handleNewNumber = (event) => {
+    setNewNumber(event.target.value)
   }
 
   return (
@@ -26,7 +32,10 @@ const App = () => {
 
       <form>
         <p>
-          name: <input value={newName} onChange={handleNewName} />{" "}
+          name: <input type="text" value={newName} onChange={handleNewName} />
+        </p>
+        <p>
+          number: <input type="text" value={newNumber} onChange={handleNewNumber}/>{" "}
           <button type="submit" onClick={handleAddPerson}>
             add
           </button>
@@ -35,7 +44,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       {persons.map((person) => (
-        <h3 key={person.name}>{person.name}</h3>
+        <h3 key={person.name}>{person.name} {' '} {person.number}</h3>
       ))}
     </div>
   )
