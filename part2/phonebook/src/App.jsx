@@ -1,4 +1,7 @@
 import { useState } from "react"
+import Filter from "./components/Filter"
+import PersonForm from "./components/PersonForm"
+import Persons from "./components/Persons"
 
 const App = () => {
   const initialPersons = [
@@ -10,7 +13,7 @@ const App = () => {
   const [persons, setPersons] = useState(initialPersons)
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState("")
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -18,15 +21,17 @@ const App = () => {
 
   const handleAddPerson = (event) => {
     event.preventDefault()
-    const findPerson = persons.find(person => person.name.trim() === newName.trim())
+    const findPerson = persons.find(
+      (person) => person.name.trim() === newName.trim()
+    )
     if (findPerson) {
       alert(`${newName} is already added to phonebook`)
-      setNewName('')
+      setNewName("")
       return
     }
     setPersons(persons.concat({ name: newName, number: newNumber }))
-    setNewName('')
-    setNewNumber('')
+    setNewName("")
+    setNewNumber("")
   }
 
   const handleNewNumber = (event) => {
@@ -34,7 +39,7 @@ const App = () => {
   }
 
   const handleFilter = (event) => {
-    setFilter(event.target.value)  
+    setFilter(event.target.value)
   }
 
   function personsFilter(person) {
@@ -43,33 +48,24 @@ const App = () => {
     }
   }
 
-  const personsToShow = filter === ''
-    ? persons 
-    : persons.filter(personsFilter);
+  const personsToShow = filter === "" ? persons : persons.filter(personsFilter)
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Filter filter={filter} onHandleFilter={handleFilter} />
 
-      Filter shown with <input type="text" value={filter} onChange={handleFilter}/>
+      <h3>Add a New</h3>
+      <PersonForm
+        name={newName}
+        number={newNumber}
+        onHandleName={handleNewName}
+        onHandleNumber={handleNewNumber}
+        onHandleAdd={handleAddPerson}
+      />
 
-      <h2>Add a New</h2>
-      <form>
-        <p>
-          Name: <input type="text" value={newName} onChange={handleNewName} />
-        </p>
-        <p>
-          Number: <input type="text" value={newNumber} onChange={handleNewNumber}/>{" "}
-          <button type="submit" onClick={handleAddPerson}>
-            Add
-          </button>
-        </p>
-      </form>
-
-      <h2>Numbers</h2>
-      {personsToShow.map((person) => (
-        <h3 key={person.name}>{person.name} {' '} {person.number}</h3>
-      ))}
+      <h3>Numbers</h3>
+      <Persons personsToShow={personsToShow} />
     </div>
   )
 }
