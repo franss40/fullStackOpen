@@ -22,17 +22,21 @@ const App = () => {
 
   const handleAddPerson = (event) => {
     event.preventDefault()
-    const findPerson = persons.find(
-      (person) => person.name.trim() === newName.trim()
-    )
-    if (findPerson) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName("")
-      return
-    }
-    setPersons(persons.concat({ name: newName, number: newNumber }))
-    setNewName("")
-    setNewNumber("")
+    axios
+      .post('http://localhost:3001/persons', { name: newName, number: newNumber })
+      .then(response => {
+        const findPerson = persons.find(
+          (person) => person.name.trim() === newName.trim()
+        )
+        if (findPerson) {
+          alert(`${newName} is already added to phonebook`)
+          setNewName("")
+          return
+        }
+        setPersons(persons.concat(response.data))
+        setNewName("")
+        setNewNumber("")
+      })
   }
 
   const handleNewNumber = (event) => {
