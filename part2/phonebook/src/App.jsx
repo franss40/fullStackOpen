@@ -30,6 +30,29 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleDelete = (id) => {
+    const findPerson = persons.find(
+      person => person.id === id
+    )
+    if (!window.confirm(`Do you want to delete this record (${findPerson.name})`)) {
+      return
+    }
+    personServices
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter((person) => person.id !== id))
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("error: " + error.response.status)
+        } else {
+          console.log(
+            "se ha producido un error en la recuperación de datos, " + error
+          )
+        }
+      })
+  }
+
   const handleAddPerson = (event) => {
     event.preventDefault()
     const findPerson = persons.find(
@@ -90,7 +113,7 @@ const App = () => {
       />
       <h3>Numbers</h3>
       {persons.length ? (
-        <Persons personsToShow={personsToShow} />
+        <Persons personsToShow={personsToShow} personDelete={handleDelete} />
       ) : (
         <h4>Loading ...</h4>
       )}
