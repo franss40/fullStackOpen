@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
-//import axios from "axios"
 import personServices from "./services/persons"
 
 const App = () => {
@@ -14,7 +13,7 @@ const App = () => {
   useEffect(() => {
     personServices
       .getAll()
-      .then((response) => setPersons(response))
+      .then(response => setPersons(response))
       .catch((error) => {
         if (error.response) {
           console.log("error: " + error.response.status)
@@ -56,15 +55,25 @@ const App = () => {
   const handleAddPerson = (event) => {
     event.preventDefault()
     const findPerson = persons.find(
-      (person) => person.name.trim() === newName.trim()
+      person => person.name.trim() === newName.trim()
     )
     if (findPerson) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-      setNewNumber('')
+      const ask = window.confirm(
+        `${findPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )
+      if (ask) {
+        personServices
+          .update(findPerson.id, {name: newName, number: newNumber})
+          .then(response => {
+            setPersons(persons.map(person => 
+              person.id === response.id ? response : person
+            ))
+          })
+      }
+      setNewName("")
+      setNewNumber("")
       return
     }
-
     personServices
       .create({ name: newName, number: newNumber })
       .then((response) => {
