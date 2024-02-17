@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
-import axios from 'axios';
+//import axios from "axios"
+import personServices from "./services/persons"
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,10 +12,19 @@ const App = () => {
   const [filter, setFilter] = useState("")
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
-  },[])
+    personServices
+      .getAll()
+      .then((response) => setPersons(response))
+      .catch((error) => {
+        if (error.response) {
+          console.log("error: " + error.response.status)
+        } else {
+          console.log(
+            "se ha producido un error en la recuperación de datos, " + error
+          )
+        }
+      })
+  }, [])
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -22,20 +32,31 @@ const App = () => {
 
   const handleAddPerson = (event) => {
     event.preventDefault()
-    axios
-      .post('http://localhost:3001/persons', { name: newName, number: newNumber })
-      .then(response => {
-        const findPerson = persons.find(
-          (person) => person.name.trim() === newName.trim()
-        )
-        if (findPerson) {
-          alert(`${newName} is already added to phonebook`)
-          setNewName("")
-          return
+    const findPerson = persons.find(
+      (person) => person.name.trim() === newName.trim()
+    )
+    if (findPerson) {
+      alert(`${newName} is already added to phonebook`)
+      setNewName('')
+      setNewNumber('')
+      return
+    }
+
+    personServices
+      .create({ name: newName, number: newNumber })
+      .then((response) => {
+        setPersons(persons.concat(response))
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("error: " + error.response.status)
+        } else {
+          console.log(
+            "se ha producido un error en la recuperación de datos, " + error
+          )
         }
-        setPersons(persons.concat(response.data))
-        setNewName("")
-        setNewNumber("")
       })
   }
 
@@ -59,7 +80,6 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter filter={filter} onHandleFilter={handleFilter} />
-
       <h3>Add a New</h3>
       <PersonForm
         name={newName}
@@ -68,9 +88,12 @@ const App = () => {
         onHandleNumber={handleNewNumber}
         onHandleAdd={handleAddPerson}
       />
-
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      {persons.length ? (
+        <Persons personsToShow={personsToShow} />
+      ) : (
+        <h4>Loading ...</h4>
+      )}
     </div>
   )
 }
