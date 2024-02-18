@@ -1,9 +1,9 @@
 import './notification.css'
 
-const Notification = ({ message }) => {
+const Notification = ({ message, classcss='error' }) => {
   if (message === null) return null
   return (
-    <div className="error">
+    <div className={classcss}>
       {message}
     </div>
   )

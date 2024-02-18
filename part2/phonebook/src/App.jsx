@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("")
   const [filter, setFilter] = useState("")
   const [errorPerson, setErrorPerson] = useState(null)
+  const [errorCss, setErrorCss] = useState('error')
 
   useEffect(() => {
     personServices
@@ -18,16 +19,15 @@ const App = () => {
       .then(response => setPersons(response))
       .catch((error) => {
         if (error.response) {
-          console.log("error: " + error.response.status)
+          showInfo("error: " + error.response.status)
         } else {
-          console.log(
-            "se ha producido un error en la recuperación de datos, " + error
-          )
+          showInfo('Error ' + error)
         }
       })
   }, [])
 
-  const showError = (message) => {
+  const showInfo = (message, typeCss = 'error') => {
+    setErrorCss(typeCss)
     setErrorPerson(message)
     setNewName("")
     setNewNumber("")
@@ -50,15 +50,15 @@ const App = () => {
     personServices
       .remove(id)
       .then(() => {
+        showInfo(`Delete ${findPerson.name}`, 'errorRed')
         setPersons(persons.filter((person) => person.id !== id))
       })
       .catch((error) => {
         if (error.response) {
-          console.log("error: " + error.response.status)
+          showInfo(`Information of ${findPerson.name} has already been removed from server`)
+          setPersons(persons.filter(person => person.id !== id))          
         } else {
-          console.log(
-            "se ha producido un error en la recuperación de datos, " + error
-          )
+          showInfo('There was an error')
         }
       })
   }
@@ -81,21 +81,21 @@ const App = () => {
             ))
           })
       }
-      showError(`Edited ${newName}`)
+      showInfo(`Edited ${newName}`)
       return
     }
     personServices
       .create({ name: newName, number: newNumber })
       .then((response) => {
         setPersons(persons.concat(response))
-        showError(`Added ${newName}`)
+        showInfo(`Added ${newName}`)
       })
       .catch((error) => {
         if (error.response) {
-          console.log("error: " + error.response.status)
+          showInfo("error: " + error.response.status)
         } else {
-          console.log(
-            "se ha producido un error en la recuperación de datos, " + error
+          showInfo(
+            "there was an error: " + error
           )
         }
       })
@@ -120,7 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorPerson} />
+      <Notification message={errorPerson} classcss={errorCss} />
       <Filter filter={filter} onHandleFilter={handleFilter} />
       <h3>Add a New</h3>
       <PersonForm
