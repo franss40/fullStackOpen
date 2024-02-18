@@ -3,12 +3,14 @@ import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 import personServices from "./services/persons"
+import Notification from "./components/Notification"
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [filter, setFilter] = useState("")
+  const [errorPerson, setErrorPerson] = useState(null)
 
   useEffect(() => {
     personServices
@@ -24,6 +26,15 @@ const App = () => {
         }
       })
   }, [])
+
+  const showError = (message) => {
+    setErrorPerson(message)
+    setNewName("")
+    setNewNumber("")
+    setTimeout(() => {
+      setErrorPerson(null)
+    }, 5000)
+  }
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -70,16 +81,14 @@ const App = () => {
             ))
           })
       }
-      setNewName("")
-      setNewNumber("")
+      showError(`Edited ${newName}`)
       return
     }
     personServices
       .create({ name: newName, number: newNumber })
       .then((response) => {
         setPersons(persons.concat(response))
-        setNewName('')
-        setNewNumber('')
+        showError(`Added ${newName}`)
       })
       .catch((error) => {
         if (error.response) {
@@ -111,6 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorPerson} />
       <Filter filter={filter} onHandleFilter={handleFilter} />
       <h3>Add a New</h3>
       <PersonForm
