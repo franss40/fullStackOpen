@@ -19,9 +19,9 @@ const App = () => {
       .then(response => setPersons(response))
       .catch((error) => {
         if (error.response) {
-          showInfo("error: " + error.response.status)
+          showInfo("error: " + error.response.status, "errorRed")
         } else {
-          showInfo('Error ' + error)
+          showInfo("Error " + error, "errorRed")
         }
       })
   }, [])
@@ -50,15 +50,18 @@ const App = () => {
     personServices
       .remove(id)
       .then(() => {
-        showInfo(`Delete ${findPerson.name}`, 'errorRed')
+        showInfo(`Delete ${findPerson.name}`)
         setPersons(persons.filter((person) => person.id !== id))
       })
       .catch((error) => {
         if (error.response) {
-          showInfo(`Information of ${findPerson.name} has already been removed from server`)
+          showInfo(
+            `Information of ${findPerson.name} has already been removed from server`,
+            "errorRed"
+          )
           setPersons(persons.filter(person => person.id !== id))          
         } else {
-          showInfo('There was an error')
+          showInfo("There was an error", "errorRed")
         }
       })
   }
@@ -92,11 +95,9 @@ const App = () => {
       })
       .catch((error) => {
         if (error.response) {
-          showInfo("error: " + error.response.status)
+          showInfo("error: " + error.response.status, "errorRed")
         } else {
-          showInfo(
-            "there was an error: " + error
-          )
+          showInfo("there was an error: " + error, "errorRed")
         }
       })
   }
