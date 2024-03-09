@@ -93,9 +93,9 @@ const App = () => {
         setPersons(persons.concat(response))
         showInfo(`Added ${newName}`)
       })
-      .catch((error) => {
+      .catch((error) => {        
         if (error.response) {
-          showInfo("error: " + error.response.status, "errorRed")
+          showInfo(error.response.data.error, "errorRed")
         } else {
           showInfo("there was an error: " + error, "errorRed")
         }
